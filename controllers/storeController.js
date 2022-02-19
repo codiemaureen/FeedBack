@@ -1,5 +1,18 @@
 const mongoose = require('mongoose');
 const Store = mongoose.model('Store');
+const multer = require('multer');
+const jimp = require('jimp');
+const uuid = require('uuid');
+
+const multerOptions = {
+    storeage: multer.memoryStorage(),
+    fileFilter(req, file, next) {
+        const isPhoto = file.mimetype.startsWith('image/');
+        if(isPhoto) {
+            next(null, true);
+        }
+    }
+};
 
 exports.homePage = (req, res) => {
     res.render('store', {title: 'homePage'});
@@ -10,10 +23,26 @@ exports.addStore = (req, res) => {
 };
 
 
+//middleware to upload photos
+exports.upload = multer(multerOptions).single('photo');
+
+exports.resize = async(req, res, next) => {
+    //check if there is no new file
+    if(!req.file) {
+        next();
+        return;
+    } 
+    const extension = req.file.mimetype.split('/')[1];
+    req.body.photo = `${uuid.v4()}.${extension}`;
+    const photo = await jimp.read(req.file.buffer);
+    await photo.resize(800, jimp.AUTO);
+    await photo.write(`./public/uploads/${req.body.photo}`)
+    next();
+}
 
 exports.createStore = async (req, res) => {
     const store = await new Store(req.body).save();
-    req.flash('success', `You have successfully created ${store.name}`);
+    req.flash('success', `You have successfully created ${store.name}. You like to leave a review`);
     res.redirect(`/store/${store.slug}`);
 };
 
@@ -28,10 +57,12 @@ exports.editStore = async (req,res) => {
 };
 
 exports.updateStore = async(req, res) => {
+    //setting location to be a point
+    req.body.location.type = 'Point';
     const store = await Store.findOneAndUpdate({ _id: req.params.id}, req.body, {
         new: true,
         runValidators: true
     }).exec();
-    req.flash('success', `You have successfully update ${store.name}. <a href="/store/${store.slug}">View Store</a>`);
+    req.flash('success', `You have successfully update ${store.name}. Click here to view store<a href="/store/${store.slug}">View Store</a>`);
     res.redirect(`/store/${store._id}/edit`)
 };

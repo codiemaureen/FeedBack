@@ -20,20 +20,20 @@ const storeSchema = new mongoose.Schema({
         default: Date.now()
     },
     location: {
-        type:{
+        type: {
             type: String,
             default: 'Point',
         },
-        coordinates:[{
+        coordinates: [{
             type: Number,
-            required: [true, 'You must supply coordinates!']
+            required: [true, 'you must supply coordinates']
         }],
         address: {
             type: String,
-            required: [true, 'You must supply an address']
+            required: [true, 'you must supply an address']
         }
-    }
-
+    },
+    photo: String,
 })
 
 //slug the store name
