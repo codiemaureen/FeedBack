@@ -15,6 +15,25 @@ const storeSchema = new mongoose.Schema({
         trim: true,
     },
     tags: [String],
+    created: {
+        type: Date,
+        default: Date.now()
+    },
+    location: {
+        type:{
+            type: String,
+            default: 'Point',
+        },
+        coordinates:[{
+            type: Number,
+            required: [true, 'You must supply coordinates!']
+        }],
+        address: {
+            type: String,
+            required: [true, 'You must supply an address']
+        }
+    }
+
 })
 
 //slug the store name
