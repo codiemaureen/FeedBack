@@ -47,6 +47,8 @@ storeSchema.index({
     description: 'text'
 });
 
+storeSchema.index({ location: '2dsphere'});
+
 //slug the store name
 storeSchema.pre('save', async function (next) {
     if(!this.isModified('name')) {
