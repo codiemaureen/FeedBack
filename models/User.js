@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 mongoose.Promise = global.Promise;
 const md5 = require('md5');
 const validator = require('validator');
@@ -20,6 +19,8 @@ const userSchema = new mongoose.Schema({
         trim: true,
         required: [true, 'You must enter a name']
     },
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
 });
 
 userSchema.plugin(passportLocalMongoose, { usernameField: 'email'});
