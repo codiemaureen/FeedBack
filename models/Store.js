@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const slug = require('slugs');
 
-
 const storeSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -34,6 +33,11 @@ const storeSchema = new mongoose.Schema({
         },
     },
     photo: String,
+    author: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        required: [true, 'You must supply an author']
+    }
 });
 
 //slug the store name
