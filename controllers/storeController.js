@@ -10,6 +10,8 @@ const multerOptions = {
         const isPhoto = file.mimetype.startsWith('image/');
         if(isPhoto) {
             next(null, true);
+        } else {
+            next({message: `That filetype isn't allowed!`}, false);
         }
     }
 };
@@ -56,13 +58,19 @@ exports.editStore = async (req,res) => {
     res.render('editStore', {title: `Edit ${store.name}`, store});
 };
 
-exports.updateStore = async(req, res) => {
-    //setting location to be a point
+exports.updateStore = async(req,res) => {
+    //set location data to be a point
     req.body.location.type = 'Point';
-    const store = await Store.findOneAndUpdate({ _id: req.params.id}, req.body, {
+    const store = await Store.findOneAndUpdate({_id: req.params.id}, req.body, {
         new: true,
-        runValidators: true
+        runValidators: true,
     }).exec();
-    req.flash('success', `You have successfully update ${store.name}. Click here to view store<a href="/store/${store.slug}">View Store</a>`);
-    res.redirect(`/store/${store._id}/edit`)
+    req.flash('success', `Successfully updated <strong>${store.name}</strong>. <a href="/store/${store.slug}">View Store</a>`);
+    res.redirect(`/stores/${store._id}/edit`)
+};
+
+exports.getStoreBySlug = async (req, res) => {
+    const store = await Store.findOne({ slug: req.params.slug});
+    if(!store) return next();
+    res.render('store', {store, title: 'Store'});
 };
