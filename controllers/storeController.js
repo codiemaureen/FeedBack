@@ -79,7 +79,7 @@ exports.updateStore = async(req,res) => {
 };
 
 exports.getStoreBySlug = async (req, res) => {
-    const store = await (await Store.findOne({ slug: req.params.slug})).populate('author');
+    const store = await (await Store.findOne({ slug: req.params.slug})).populate('author reviews');
     if(!store) return next();
     res.render('store', {store, title: 'Store'});
 };
