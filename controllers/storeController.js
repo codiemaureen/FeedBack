@@ -6,7 +6,7 @@ const uuid = require('uuid');
 const User = require('../models/User');
 
 const multerOptions = {
-    storeage: multer.memoryStorage(),
+    storage: multer.memoryStorage(),
     fileFilter(req, file, next) {
         const isPhoto = file.mimetype.startsWith('image/');
         if(isPhoto) {
@@ -154,7 +154,7 @@ exports.heartStore = async (req, res) => {
     const hearts = req.user.hearts.map(obj => obj.toString());
     const operator = hearts.includes(req.params.id) ? '$pull' : '$addToSet';
     const user = await User
-    .findOneAndUpdate(req.user._id,
+    .findByIdAndUpdate(req.user._id,
         { [operator]: {hearts: req.params.id}},
         { new: true}
     );
